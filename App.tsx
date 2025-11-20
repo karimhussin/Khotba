@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './views/Home';
 import LiveSession from './views/LiveSession';
+import JoinSession from './views/JoinSession';
 import { View } from './types';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [sessionCode, setSessionCode] = useState<string | undefined>(undefined);
 
   // Theme effect
   useEffect(() => {
@@ -18,16 +20,22 @@ const App: React.FC = () => {
   }, [darkMode]);
 
   const handleStartSession = () => {
+    setSessionCode(undefined);
     setCurrentView(View.SESSION);
   };
 
   const handleJoinRoom = () => {
-    // Placeholder for join room logic
-    alert("Join Room functionality would open a code entry dialog here.");
+    setCurrentView(View.JOIN);
+  };
+
+  const handleJoinSubmit = (code: string) => {
+    setSessionCode(code);
+    setCurrentView(View.SESSION);
   };
 
   const handleBack = () => {
     setCurrentView(View.HOME);
+    setSessionCode(undefined);
   };
 
   return (
@@ -47,9 +55,21 @@ const App: React.FC = () => {
           </div>
         )}
 
+        {currentView === View.JOIN && (
+          <div className="animate-in zoom-in-95 duration-300 flex-1 flex flex-col justify-center">
+            <JoinSession 
+              onJoin={handleJoinSubmit}
+              onBack={handleBack}
+            />
+          </div>
+        )}
+
         {currentView === View.SESSION && (
           <div className="animate-in zoom-in-95 duration-300 flex-1">
-            <LiveSession onBack={handleBack} />
+            <LiveSession 
+              onBack={handleBack} 
+              sessionCode={sessionCode}
+            />
           </div>
         )}
       </main>

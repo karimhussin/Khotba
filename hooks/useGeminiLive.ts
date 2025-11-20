@@ -19,7 +19,7 @@ export const useGeminiLive = () => {
   const outputAudioContextRef = useRef<AudioContext | null>(null);
   const inputSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
-  const sessionRef = useRef<any>(null); // Using any to bypass strict type check on the session object if needed
+  const sessionRef = useRef<any>(null); 
   const streamRef = useRef<MediaStream | null>(null);
   const nextStartTimeRef = useRef<number>(0);
   const isConnectedRef = useRef<boolean>(false);
@@ -42,6 +42,14 @@ export const useGeminiLive = () => {
         sampleRate: OUTPUT_SAMPLE_RATE
       });
 
+      // CRITICAL: Resume audio contexts on user gesture (connect click) to prevent browser blocking
+      if (outputAudioContextRef.current.state === 'suspended') {
+        await outputAudioContextRef.current.resume();
+      }
+      if (inputAudioContextRef.current.state === 'suspended') {
+        await inputAudioContextRef.current.resume();
+      }
+
       // Get Microphone Stream
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -54,10 +62,10 @@ export const useGeminiLive = () => {
         speechConfig: {
           voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
         },
-        systemInstruction: `You are a real-time interpreter for a 'Khotba' (sermon). 
-        The speaker is speaking in Arabic. 
-        Your task is to translate the speech into English consecutively. 
-        Provide a respectful, clear, and accurate translation suitable for a sermon.
+        systemInstruction: `You are a professional real-time interpreter for SmartHelp. 
+        The speaker is speaking in Arabic (or as detected). 
+        Your task is to accurately translate the speech into English consecutively. 
+        Provide a clear, natural, and respectful translation.
         Also, provide the text transcription of your translation.`,
         inputAudioTranscription: { model: 'gemini-2.5-flash-native-audio-preview-09-2025' },
         outputAudioTranscription: { model: 'gemini-2.5-flash-native-audio-preview-09-2025' },
@@ -177,13 +185,9 @@ export const useGeminiLive = () => {
       outputAudioContextRef.current = null;
     }
     
-    // We can't easily "close" the sessionPromise externally in this SDK version 
-    // without holding the session object, but disconnecting the audio/websocket effectively ends it.
-    // If the SDK exposes a close method on the resolved session, we should call it.
     if (sessionRef.current) {
         sessionRef.current.then((session: any) => {
-           // Note: explicit close might not be on the session interface depending on version
-           // but we stop sending data. 
+           // Clean up session logic
         });
     }
     

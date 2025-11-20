@@ -16,10 +16,10 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary-500/20">
-              K
+              S
             </div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-              Khotba Client
+              SmartHelp Translate
             </h1>
           </div>
 
