@@ -1,0 +1,7 @@
+{
+  "name": "Khotba Client",
+  "description": "A real-time translation client for sermons and speeches using Gemini Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
